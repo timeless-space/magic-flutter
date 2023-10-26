@@ -3,7 +3,7 @@ description: A Magic oauth extension to support Magic social login authenticatio
 version: 0.3.4
 homepage: https://magic.link
 repository: https://github.com/magiclabs/magic-flutter
-
+publish_to: none
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -12,9 +12,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  magic_sdk: ^4.0.0
-  # magic_sdk:
-  #  path: "../../magic_sdk"
+  magic_sdk:
+    git:
+      url: https://github.com/timeless-space/magic-flutter.git
+      ref: bugfix/ios-visibility-view-broken
+      path: packages/magic_sdk
   uri: ^1.0.0
   flutter_web_auth: ^0.5.0
   crypto: ^3.0.1

@@ -172,11 +172,14 @@ class WebViewRelayerState extends State<WebViewRelayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: widget._isOverlayVisible,
-      maintainState: true,
-      child: WebViewWidget(controller: widget._webViewCtrl),
-    );
+    // return Visibility(
+    //   visible: widget._isOverlayVisible,
+    //   maintainState: true,
+    //   child: WebViewWidget(controller: widget._webViewCtrl),
+    // );
+
+    // TODO: Visibility break communication between app & webview on iOS
+    return WebViewWidget(controller: widget._webViewCtrl);
   }
 }
 

@@ -34,9 +34,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  platforms:
-    ios:
-      minimum_ios_version: 14.0
 
   # To add assets to your package, add an assets section, like this:
   # assets:
