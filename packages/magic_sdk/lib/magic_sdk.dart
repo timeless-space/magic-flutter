@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'modules/auth/auth_module.dart';
 import 'modules/blockchain/supported_blockchain.dart';
 import 'modules/user/user_module.dart';
@@ -19,18 +20,22 @@ class Magic {
   late RpcProvider provider;
 
   /// Expose this property to display Webview
-  WebViewRelayer relayer = WebViewRelayer();
+  late WebViewRelayer relayer;
 
   /// Initializes a new Magic SDK instance using the given [publishableKey],
-  Magic(String apiKey, {MagicLocale locale = MagicLocale.en_US}) {
+  Magic(String apiKey, {MagicLocale locale = MagicLocale.en_US, Key? key}) {
     URLBuilder.instance = URLBuilder(apiKey, locale);
+    relayer = WebViewRelayer(key: key);
     provider = RpcProvider(relayer);
   }
 
   ///Initializes a new Magic SDK instance using the given [publishableKey] and ETG network,
   Magic.eth(String apiKey,
-      {required EthNetwork network, MagicLocale locale = MagicLocale.en_US}) {
+      {required EthNetwork network,
+      MagicLocale locale = MagicLocale.en_US,
+      Key? key}) {
     URLBuilder.instance = URLBuilder.eth(apiKey, network, locale);
+    relayer = WebViewRelayer(key: key);
     provider = RpcProvider(relayer);
   }
 
@@ -38,8 +43,10 @@ class Magic {
   Magic.custom(String apiKey,
       {required String rpcUrl,
       int? chainId,
-      MagicLocale locale = MagicLocale.en_US}) {
+      MagicLocale locale = MagicLocale.en_US,
+      Key? key}) {
     URLBuilder.instance = URLBuilder.custom(apiKey, rpcUrl, chainId, locale);
+    relayer = WebViewRelayer(key: key);
     provider = RpcProvider(relayer, rpcUrl: rpcUrl);
   }
 
@@ -47,8 +54,10 @@ class Magic {
   Magic.blockchain(String apiKey,
       {required String rpcUrl,
       required SupportedBlockchain chain,
-      MagicLocale locale = MagicLocale.en_US}) {
+      MagicLocale locale = MagicLocale.en_US,
+      Key? key}) {
     URLBuilder.instance = URLBuilder.blockchain(apiKey, chain, rpcUrl, locale);
+    relayer = WebViewRelayer(key: key);
     provider = RpcProvider(relayer, rpcUrl: rpcUrl);
   }
 }
