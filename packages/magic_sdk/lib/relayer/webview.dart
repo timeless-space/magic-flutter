@@ -106,7 +106,7 @@ class WebViewRelayerState extends State<WebViewRelayer> {
     try {
       url = await URLBuilder.instance.url;
       if (url != null) {
-        loadWebView();
+        await loadWebView();
       } else {
         setState(() {
           // Show an error message or handle the absence of URL
@@ -120,14 +120,16 @@ class WebViewRelayerState extends State<WebViewRelayer> {
     }
   }
 
-  void loadWebView() {
+  Future<void> loadWebView() async {
     // enable inspector
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      final double? iosVersion = double.tryParse(Platform.operatingSystemVersion.split(' ')[1]);
+      final double? iosVersion =
+          double.tryParse(Platform.operatingSystemVersion.split(' ')[1]);
 
-      if (iosVersion != null && iosVersion >= 16.0) {  // setInspectable isn't avaliable in earlier iOS versions
+      if (iosVersion != null && iosVersion >= 16.0) {
+        // setInspectable isn't avaliable in earlier iOS versions
         final WebKitWebViewController webKitController =
-        widget._webViewCtrl.platform as WebKitWebViewController;
+            widget._webViewCtrl.platform as WebKitWebViewController;
         webKitController.setInspectable(true);
       }
     } else if (WebViewPlatform.instance is AndroidWebViewPlatform) {
@@ -141,6 +143,18 @@ class WebViewRelayerState extends State<WebViewRelayer> {
       onMessageReceived(message);
     });
     widget._webViewCtrl.loadRequest(Uri.parse(url!));
+
+    // Waits for the webview to load or refresh
+    await Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      try {
+        final loaded = await widget._webViewCtrl.runJavaScriptReturningResult(
+            "document.getElementById('auth-relayer') != null") as bool;
+        return !loaded;
+      } catch (e) {
+        return true;
+      }
+    });
   }
 
   void onMessageReceived(JavaScriptMessage message) {
