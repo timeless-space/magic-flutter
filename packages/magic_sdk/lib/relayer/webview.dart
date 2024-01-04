@@ -123,10 +123,9 @@ class WebViewRelayerState extends State<WebViewRelayer> {
   Future<void> loadWebView() async {
     // enable inspector
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      final double? iosVersion =
-          double.tryParse(Platform.operatingSystemVersion.split(' ')[1]);
+      final String iosVersion = Platform.operatingSystemVersion.split(' ')[1];
 
-      if (iosVersion != null && iosVersion >= 16.0) {
+      if (_getVersionNumber(iosVersion) >= _getVersionNumber('16.4')) {
         // setInspectable isn't avaliable in earlier iOS versions
         final WebKitWebViewController webKitController =
             widget._webViewCtrl.platform as WebKitWebViewController;
@@ -155,6 +154,22 @@ class WebViewRelayerState extends State<WebViewRelayer> {
         return true;
       }
     });
+  }
+
+  int _getVersionNumber(String version) {
+    try {
+      List versionCells = version.split('.');
+      if (versionCells.length == 1) {
+        versionCells.add('0');
+      }
+      if (versionCells.length == 2) {
+        versionCells.add('0');
+      }
+      versionCells = versionCells.map((i) => int.parse(i)).toList();
+      return versionCells[0] * 10000 + versionCells[1] * 100 + versionCells[2];
+    } catch (e) {
+      return 0;
+    }
   }
 
   void onMessageReceived(JavaScriptMessage message) {
