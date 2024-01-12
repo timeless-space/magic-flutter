@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:isolate';
+
+import 'package:flutter/services.dart';
 
 import '../../provider/types/relayer_request.dart';
 import '../../provider/types/relayer_response.dart';
@@ -28,7 +31,21 @@ Future<JavaScriptMessage> send({
   var encodedParams = await URLBuilder.instance.encodedParams;
 
   // Get the JWT value from the createJwt() method
-  String? jwt = await createJwt();
+  Completer<String?> createJwtCompleter = Completer<String?>();
+  RootIsolateToken? rootIsolateToken = RootIsolateToken.instance;
+  if (rootIsolateToken != null) {
+    // Create a receive port for communication
+    ReceivePort receivePort = ReceivePort();
+    // Spawn the isolate, passing both the root isolate token and send port
+    Isolate.spawn(createJwt, [rootIsolateToken, receivePort.sendPort]);
+    // Listen for messages from the isolate
+    receivePort.listen((message) {
+      createJwtCompleter.complete(message as String?);
+    }); 
+  } else {
+    createJwtCompleter.complete(await createJwt([]));
+  }
+  String? jwt = await createJwtCompleter.future;
 
   var relayerRequest = RelayerRequest(
     msgType: '${msgType.toString().split('.').last}-$encodedParams',

@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'package:secp256r1/secp256r1.dart';
 
@@ -15,11 +17,17 @@ String base64UrlEncoded(List<int> data) {
   return b64;
 }
 
-Future<String?> createJwt() async {
+Future<String?> createJwt(List<dynamic> args) async {
   try {
+    RootIsolateToken? rootIsolateToken = args.first as RootIsolateToken?;
+    if (rootIsolateToken != null) {
+      // Register background isolate with the root isolate
+      BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
+    }
+
     // Get the public key.
     final publicKey = await SecureP256.getPublicKey(_alias);
-    
+
     // Get the public key, raw representation.
     final rawPublicKey = publicKey.rawKey;
 
@@ -66,6 +74,7 @@ Future<String?> createJwt() async {
 
     final jwt = signingInput + "." + signatureB64;
 
+    (args.last as SendPort?)?.send(jwt);
     return jwt;
 
   } catch (error) {
