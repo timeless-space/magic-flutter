@@ -1,12 +1,12 @@
 name: magic_ext_oauth
 description: A Magic oauth extension to support Magic social login authentication
-version: 0.3.4
+version: 0.4.7
 homepage: https://magic.link
 repository: https://github.com/magiclabs/magic-flutter
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: '>=2.12.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
@@ -15,8 +15,11 @@ dependencies:
   magic_sdk:
     git:
       url: https://github.com/timeless-space/magic-flutter.git
-      ref: bugfix/android-anr-due-to-accessing-keystore-on-main-thread
+      ref: develop
       path: packages/magic_sdk
+  # magic_sdk:
+  #  path: "../../magic_sdk"
+  package_info_plus: ^4.2.0
   uri: ^1.0.0
   flutter_web_auth: ^0.5.0
   crypto: ^3.0.1

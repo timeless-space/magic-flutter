@@ -27,6 +27,7 @@ or README in each package directory
 | [`magic_ext_oauth`](https://pub.dev/packages/magic_ext_oauth)   | [CHANGELOG](./packages/magic_ext/oauth/CHANGELOG.md)  | An Extension to access OAuth providers                                |
 | [`magic_ext_tezos`](https://pub.dev/packages/magic_ext_tezos)   | [CHANGELOG](./packages/magic_ext/tezos/CHANGELOG.md)  | Tezos blockchain extension that integrates with Tezart                |
 | [`magic_ext_solana`](https://pub.dev/packages/magic_ext_solana) | [CHANGELOG](./packages/magic_ext/solana/CHANGELOG.md) | Solana blockchain extension that integrates with crypto-please/solana |
+| [`magic_ext_oidc`](https://pub.dev/packages/magic_ext_oidc) | [CHANGELOG](./packages/magic_ext/oidc/CHANGELOG.md) | Magic Open Id Connect SDK extension for Flutter |
 
 ### Blockchain access
 
@@ -45,3 +46,14 @@ To generate a new sets of files to reflect your changes please run the command b
 $ dart run build_runner build --delete-conflicting-outputs
 ```
 
+### Proguard rules 
+Relates to [issue #43](https://github.com/magiclabs/magic-flutter/issues/43).
+
+Add a `proguard-rules.pro` file under your `android/app` folder (or update your existing one), with the following rule:
+```
+# Preserve annotated Javascript interface methods.
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+```
+Example: [Magic Flutter Demo App](https://github.com/magiclabs/magic-flutter/blob/main/magic_demo/android/app/proguard-rules.pro)
